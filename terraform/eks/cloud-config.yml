@@ -1,0 +1,4 @@
+#cloud-config
+
+runcmd:
+  - /etc/eks/bootstrap.sh --apiserver-endpoint '${eks_cluster_endpoint}' --b64-cluster-ca '${certificate_authority}' '${cluster_name}'
