@@ -39,7 +39,8 @@ locals {
 }
 
 resource "google_project_service" "services" {
-  for_each = local.services
-  project  = each.value
-  service  = replace(each.key, "/.*\\//", "")
+  for_each   = local.services
+  project    = each.value
+  service    = replace(each.key, "/.*\\//", "")
+  depends_on = [google_project.project]
 }

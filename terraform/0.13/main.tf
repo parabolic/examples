@@ -2,7 +2,7 @@ locals {
   workloads = {
     team-a = {
       projects = {
-        quality-assurance = {
+        qa-a-1 = {
           auto_create_network = true
           services = [
             "sql-component.googleapis.com",
@@ -12,13 +12,13 @@ locals {
     }
     team-b = {
       projects = {
-        quality-assurance = {
+        qa-b-1 = {
           auto_create_network = false
           services = [
             "sql-component.googleapis.com",
           ]
         }
-        development = {
+        dev-b-1 = {
           services = [
             "sql-component.googleapis.com",
             "pubsub.googleapis.com",
@@ -28,14 +28,14 @@ locals {
     }
     team-c = {
       projects = {
-        production = {}
+        prod-c-1 = {}
       }
     }
   }
 }
 
 module "cloudlad_org" {
-  source   = "./modules/resource_management"
+  source   = "../modules/resource_management"
   for_each = local.workloads
 
   billing_account = var.billing_account
@@ -60,7 +60,7 @@ locals {
 }
 
 module "cloudlad_org_security" {
-  source   = "./modules/resource_management"
+  source   = "../modules/resource_management"
   for_each = local.security
 
   billing_account = var.billing_account
