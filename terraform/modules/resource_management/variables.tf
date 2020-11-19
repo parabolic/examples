@@ -20,7 +20,7 @@ variable "folder_parent" {
 
   validation {
     condition     = can(regex("^folders/\\d{12}$", var.folder_parent))
-    error_message = "Invalid folder parent, please provide a valid folder parent in the following format \"folder/111111111111\"."
+    error_message = "Invalid folder parent, please provide a valid folder parent in the following format \"folders/111111111111\"."
   }
 }
 
