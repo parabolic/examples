@@ -109,6 +109,7 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   Trigger for Cloud Build when a pull request is merged into master.
   EOF
 
+  included_files = ["*.tf"]
   github {
     name  = "examples"
     owner = "parabolic"
@@ -116,7 +117,6 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
     pull_request {
       branch          = "^master$"
       comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
-      invert_regex    = true
     }
   }
 
