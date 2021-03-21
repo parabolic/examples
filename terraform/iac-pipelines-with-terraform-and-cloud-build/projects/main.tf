@@ -106,7 +106,7 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   project     = "cloud-build-3660853213"
   name        = "pull-request-push"
   description = <<EOF
-  Trigger for Cloud Build when a pull request is merged into master.
+  Trigger  for Cloud Build when a pull request is merged into master.
   EOF
 
   included_files = ["terraform/iac-pipelines-with-terraform-and-cloud-build/**.tf"]
