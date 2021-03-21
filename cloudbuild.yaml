@@ -11,7 +11,7 @@ steps:
           echo "+----------------+"
 
   - id: 'lint-terraform'
-    name: 'hashicorp/terraform:0.11.14'
+    name: 'hashicorp/terraform:latest'
     dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
     entrypoint: 'sh'
     args:
