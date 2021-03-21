@@ -80,31 +80,31 @@ resource "google_project_service" "apis" {
 # This should be uncommented only when the repository is added manually "click-opsed" in the console.
 # Currently there's no way to connect a repo via the api.
 
-resource "google_cloudbuild_trigger" "pull_request_create" {
+# resource "google_cloudbuild_trigger" "pull_request_merge" {
+#   project     = "cloud-build-3660853213"
+#   name        = "pull-request-merge"
+#   description = <<EOF
+#   Trigger for Cloud Build when a pull request is created.
+#   EOF
+
+#   github {
+#     name  = "examples"
+#     owner = "parabolic"
+
+#     pull_request {
+#       branch          = "^master$"
+#       comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
+#       invert_regex    = true
+#     }
+#   }
+
+#   filename   = "cloudbuild.yaml" # Root of the repository
+#   depends_on = [google_project_service.apis]
+# }
+
+resource "google_cloudbuild_trigger" "pull_request_push" {
   project     = "cloud-build-3660853213"
-  name        = "pull-request-create"
-  description = <<EOF
-  Trigger for Cloud Build when a pull request is created.
-  EOF
-
-  github {
-    name  = "examples"
-    owner = "parabolic"
-
-    pull_request {
-      branch          = "^master$"
-      comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
-      invert_regex    = true
-    }
-  }
-
-  filename   = "cloudbuild.yaml" # Root of the repository
-  depends_on = [google_project_service.apis]
-}
-
-resource "google_cloudbuild_trigger" "pull_request_merge" {
-  project     = "cloud-build-3660853213"
-  name        = "pull-request-merge"
+  name        = "pull-request-push"
   description = <<EOF
   Trigger for Cloud Build when a pull request is merged into master.
   EOF
@@ -116,6 +116,7 @@ resource "google_cloudbuild_trigger" "pull_request_merge" {
     pull_request {
       branch          = "^master$"
       comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
+      invert_regex    = true
     }
   }
 

@@ -7,7 +7,7 @@ steps:
       - '-c'
       - |
           echo "+-------------------------------------------+"
-          echo "${BRANCH_NAME}"
+          echo "${BRANCH_NAME} "
           echo "+-------------------------------------------+"
 
   - id: 'fmt-validate'
@@ -20,7 +20,7 @@ steps:
           for folder in $(ls .); do
 
             echo "+-------------------------------------------+"
-            echo "Validating templates in folder ${folder} "
+            echo "Fmt/Validate templates in folder ${folder} "
             echo "+-------------------------------------------+"
 
             cd $folder
@@ -42,7 +42,7 @@ steps:
           for folder in $(ls .); do
 
             echo "+-------------------------------------------+"
-            echo "Validating templates in folder ${folder} "
+            echo "tflint templates in folder ${folder} "
             echo "+-------------------------------------------+"
 
             cd $folder
