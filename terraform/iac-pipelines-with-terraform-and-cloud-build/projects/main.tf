@@ -80,36 +80,34 @@ resource "google_project_service" "apis" {
 # This should be uncommented only when the repository is added manually "click-opsed" in the console.
 # Currently there's no way to connect a repo via the api.
 
-# resource "google_cloudbuild_trigger" "pull_request_merge" {
-#   project     = "cloud-build-3660853213"
-#   name        = "pull-request-merge"
-#   description = <<EOF
-#   Trigger for Cloud Build when a pull request is created.
-#   EOF
+resource "google_cloudbuild_trigger" "pull_request_merge" {
+  project     = "cloud-build-3660853213"
+  name        = "pull-request-merge"
+  description = <<EOF
+  Trigger for Cloud Build when a pull request is merged into master.
+  EOF
 
-#   github {
-#     name  = "examples"
-#     owner = "parabolic"
+  github {
+    name  = "examples"
+    owner = "parabolic"
 
-#     pull_request {
-#       branch          = "^master$"
-#       comment_control = "COMMENTS_ENABLED_FOR_EXTERNAL_CONTRIBUTORS_ONLY"
-#       invert_regex    = true
-#     }
-#   }
+    push {
+      branch = "^master$"
+    }
+  }
 
-#   filename   = "cloudbuild.yaml" # Root of the repository
-#   depends_on = [google_project_service.apis]
-# }
+  filename   = "cloudbuild.yaml"
+  depends_on = [google_project_service.apis]
+}
 
 resource "google_cloudbuild_trigger" "pull_request_push" {
   project     = "cloud-build-3660853213"
   name        = "pull-request-push"
   description = <<EOF
-  Trigger  for Cloud Build when a pull request is merged into master.
+  Trigger for Cloud Build when a pull request is created.
   EOF
 
-  included_files = ["terraform/iac-pipelines-with-terraform-and-cloud-build/**"]
+  # included_files = ["terraform/iac-pipelines-with-terraform-and-cloud-build/**"]
 
   github {
     name  = "examples"
@@ -121,6 +119,6 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
     }
   }
 
-  filename   = "cloudbuild.yaml" # Root of the repository
+  filename   = "cloudbuild.yaml"
   depends_on = [google_project_service.apis]
 }
