@@ -17,13 +17,13 @@ steps:
     args:
       - '-c'
       - |
-          for Folder in $(ls .); do
+          for folder in $(ls .); do
 
             echo "+----------------+"
-            echo "| Validating ${Folder} |"
+            echo "| Validating ${folder} |"
             echo "+----------------+"
 
-            cd $Folder
+            cd $folder
 
             terraform fmt -recursive -check -diff .
 
