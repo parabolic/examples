@@ -17,11 +17,18 @@ steps:
     args:
       - '-c'
       - |
-          for folder in $(ls .); do
-            cd $folder
-            terraform fmt -recursive -check -diff terraform
+          for Folder in $(ls .); do
+
+            echo "+----------------+"
+            echo "| Validating ${Folder} |"
+            echo "+----------------+"
+
+            cd $Folder
+
+            terraform fmt -recursive -check -diff .
+
             terraform init -backend=false
-            terraform validate
+            terraform validate .
             cd -
           done
 
