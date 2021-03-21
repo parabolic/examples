@@ -18,9 +18,12 @@ steps:
       - '-c'
       - |
           for folder in $(ls .); do
-            terraform fmt -recursive -check -diff terraform
-            terraform init -backend=false
-            terraform validate
+            echo "+----------------+"
+            echo "| $(pwd) |"
+            echo "+----------------+"
+            # terraform fmt -recursive -check -diff terraform
+            # terraform init -backend=false
+            # terraform validate
           done
           # terraform fmt -recursive -check -diff terraform
 
