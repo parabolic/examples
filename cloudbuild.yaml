@@ -17,18 +17,13 @@ steps:
     args:
       - '-c'
       - |
-          pwd
-          ls -ltrash /
-          ls -ltrash .
           for folder in $(ls .); do
-            echo "+----------------+"
-            echo "| $(pwd) |"
-            echo "+----------------+"
-            # terraform fmt -recursive -check -diff terraform
-            # terraform init -backend=false
-            # terraform validate
+            cd $folder
+            terraform fmt -recursive -check -diff terraform
+            terraform init -backend=false
+            terraform validate
+            cd -
           done
-          # terraform fmt -recursive -check -diff terraform
 
     # env: ['PROJECT_ROOT=hello']
   # - id: 'terraform init'
