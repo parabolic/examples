@@ -12,11 +12,14 @@ steps:
 
   - id: 'lint-terraform'
     name: 'hashicorp/terraform:0.11.14'
-    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
+          pwd
+          ls -ltrash /
+          ls -ltrash .
           for folder in $(ls .); do
             echo "+----------------+"
             echo "| $(pwd) |"
