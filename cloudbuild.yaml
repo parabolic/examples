@@ -10,29 +10,44 @@ steps:
           echo "| ${BRANCH_NAME} |"
           echo "+----------------+"
 
-  #- id: 'terraform init'
-  #  name: 'hashicorp/terraform:0.11.14'
-  #  entrypoint: 'sh'
-  #  args:
-  #    - '-c'
-  #    - |
-  #        if [ -d "environments/$BRANCH_NAME/" ]; then
-  #          cd environments/$BRANCH_NAME
-  #          terraform init
-  #        else
-  #          for dir in environments/*/
-  #          do
-  #            cd ${dir}
-  #            env=${dir%*/}
-  #            env=${env#*/}
-  #            echo ""
-  #            echo "*************** TERRAFORM INIT ******************"
-  #            echo "******* At environment: ${env} ********"
-  #            echo "*************************************************"
-  #            terraform init || exit 1
-  #            cd ../../
-  #          done
-  #        fi
+  - id: 'lint-terraform'
+    name: 'hashicorp/terraform:0.11.14'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          for folder in $(ls .); do
+            terraform fmt -recursive -check -diff terraform
+            terraform init -backend=false
+            terraform validate
+          done
+          # terraform fmt -recursive -check -diff terraform
+
+    # env: ['PROJECT_ROOT=hello']
+  # - id: 'terraform init'
+  #   name: 'hashicorp/terraform:0.11.14'
+  #   entrypoint: 'sh'
+  #   args:
+  #     - '-c'
+  #     - |
+  #         if [ -d "environments/$BRANCH_NAME/" ]; then
+  #           cd environments/$BRANCH_NAME
+  #           terraform init
+  #         else
+  #           for dir in environments/*/
+  #           do
+  #             cd ${dir}
+  #             env=${dir%*/}
+  #             env=${env#*/}
+  #             echo ""
+  #             echo "*************** TERRAFORM INIT ******************"
+  #             echo "******* At environment: ${env} ********"
+  #             echo "*************************************************"
+  #             terraform init || exit 1
+  #             cd ../../
+  #           done
+  #         fi
 
 ## [START tf-plan]
   #- id: 'tf plan'
