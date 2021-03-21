@@ -6,11 +6,11 @@ steps:
     args:
       - '-c'
       - |
-          echo "+----------------+"
-          echo "| ${BRANCH_NAME} |"
-          echo "+----------------+"
+          echo "+-------------------------------------------+"
+          echo "${BRANCH_NAME}"
+          echo "+-------------------------------------------+"
 
-  - id: 'lint-terraform'
+  - id: 'fmt-validate'
     name: 'hashicorp/terraform:latest'
     dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
     entrypoint: 'sh'
@@ -19,9 +19,9 @@ steps:
       - |
           for folder in $(ls .); do
 
-            echo "+----------------+"
-            echo "| Validating ${folder} |"
-            echo "+----------------+"
+            echo "+-------------------------------------------+"
+            echo "Validating templates in folder ${folder} "
+            echo "+-------------------------------------------+"
 
             cd $folder
 
@@ -32,6 +32,23 @@ steps:
             cd -
           done
 
+  - id: 'tflint'
+    name: 'wata727/tflint'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          for folder in $(ls .); do
+
+            echo "+-------------------------------------------+"
+            echo "Validating templates in folder ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+            tflint .
+            cd -
+          done
     # env: ['PROJECT_ROOT=hello']
   # - id: 'terraform init'
   #   name: 'hashicorp/terraform:0.11.14'
