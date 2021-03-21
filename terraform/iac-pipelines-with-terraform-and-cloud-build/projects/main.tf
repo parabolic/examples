@@ -109,7 +109,7 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   Trigger   for Cloud Build when a pull request is merged into master.
   EOF
 
-  included_files = ["*.tf"]
+  ignored_files = ["*.tf"]
 
   github {
     name  = "examples"
