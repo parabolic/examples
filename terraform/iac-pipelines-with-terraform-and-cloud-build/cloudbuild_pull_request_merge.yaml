@@ -1,7 +1,7 @@
 ---
 steps:
   - id: 'fmt-validate'
-    name: 'hashicorp/terraform:latest'
+    name: 'hashicorp/terraform:0.14.8'
     dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
     entrypoint: 'sh'
     args:
