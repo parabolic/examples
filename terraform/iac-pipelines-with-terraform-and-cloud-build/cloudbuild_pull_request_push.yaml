@@ -12,7 +12,7 @@ steps:
 
   - id: 'fmt-validate'
     name: 'hashicorp/terraform:latest'
-    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
     entrypoint: 'sh'
     args:
       - '-c'
@@ -34,7 +34,7 @@ steps:
 
   - id: 'tflint'
     name: 'wata727/tflint'
-    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
     entrypoint: 'sh'
     args:
       - '-c'
@@ -54,12 +54,12 @@ steps:
       - 'fmt-validate'
       - 'tflint'
     name: 'hashicorp/terraform:latest'
-    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
-          for folder in "staging production"; do
+          for folder in $(ls .); do
             cd $folder
             terraform init
             terraform plan -detailed-exitcode
