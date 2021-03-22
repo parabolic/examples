@@ -59,9 +59,9 @@ steps:
     args:
       - '-c'
       - |
-          for folder in $(ls .); do
+          for folder in "staging production"; do
             cd $folder
             terraform init
-            terraform plan -detailed-exitcode -out="$BUILD_ID"_"$SHORT_SHA"_tfplan
+            terraform plan -detailed-exitcode
             cd -
           done
