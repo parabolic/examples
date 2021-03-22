@@ -9,6 +9,16 @@ terraform {
   }
 }
 
+locals {
+  project = "prod-1549784393"
+  region  = "eu-west4"
+}
+
+provider "google" {
+  project = local.gcp_project_id
+  region  = local.region
+}
+
 resource "google_pubsub_topic" "production" {
   name = "production-topic"
 }
