@@ -15,7 +15,7 @@ locals {
 }
 
 provider "google" {
-  project = local.project
+  project = local.projects
   region  = local.region
 }
 

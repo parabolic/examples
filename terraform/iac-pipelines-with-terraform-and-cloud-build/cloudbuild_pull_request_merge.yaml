@@ -17,8 +17,8 @@ steps:
     args:
       - '-c'
       - |
+          set -e
           for folder in $(ls .); do
-
             echo "+-------------------------------------------+"
             echo "Fmt/Validate templates in folder ${folder} "
             echo "+-------------------------------------------+"
@@ -39,6 +39,7 @@ steps:
     args:
       - '-c'
       - |
+          set -e
           for folder in $(ls .); do
 
             echo "+-------------------------------------------+"
