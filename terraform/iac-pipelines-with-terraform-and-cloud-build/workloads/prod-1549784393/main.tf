@@ -15,7 +15,7 @@ locals {
 }
 
 provider "google" {
-  project = local.gcp_project_id
+  project = local.project
   region  = local.region
 }
 
