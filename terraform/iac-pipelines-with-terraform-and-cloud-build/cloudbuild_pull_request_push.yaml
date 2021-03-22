@@ -1,0 +1,67 @@
+---
+steps:
+  - id: 'display-branch-name'
+    name: 'alpine:latest'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          echo "+-------------------------------------------+"
+          echo "${BRANCH_NAME}"
+          echo "+-------------------------------------------+"
+
+  - id: 'fmt-validate'
+    name: 'hashicorp/terraform:latest'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          for folder in $(ls .); do
+
+            echo "+-------------------------------------------+"
+            echo "Fmt/Validate templates in folder ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+
+            terraform fmt -recursive -check -diff .
+
+            terraform init -backend=false
+            terraform validate .
+            cd -
+          done
+
+  - id: 'tflint'
+    name: 'wata727/tflint'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          for folder in $(ls .); do
+
+            echo "+-------------------------------------------+"
+            echo "tflint templates in folder ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+            tflint .
+            cd -
+          done
+  - id: 'terraform-init-plan'
+    waitFor:
+      - 'fmt-validate'
+      - 'tflint'
+    name: 'hashicorp/terraform:latest'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          for folder in $(ls .); do
+            cd $folder
+            terraform init
+            terraform plan -detailed-exitcode -out=$BUILD_ID_$SHORT_SHA_tfplan
+            cd -
+          done
