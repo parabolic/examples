@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.14"
+  required_version = "0.14.8"
 
   required_providers {
     google = {
@@ -96,7 +96,7 @@ resource "google_cloudbuild_trigger" "pull_request_merge" {
     }
   }
 
-  filename   = "cloudbuild.yaml" # Root of the repository
+  filename   = "terraform/iac-pipelines-with-terraform-and-cloud-build/cloudbuild_pull_request_merge.yaml"
   depends_on = [google_project_service.apis]
 }
 
@@ -104,10 +104,11 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   project     = "cloud-build-3660853213"
   name        = "pull-request-push"
   description = <<EOF
-  Trigger for Cloud Build when a pull request is created.
+  Trigger for Cloud Build when a pull request is created
+  and it's pushed to.
   EOF
 
-  included_files = ["terraform/iac-pipelines-with-terraform-and-cloud-build/**"]
+  included_files = ["**/*.tf"]
 
   github {
     name  = "examples"
@@ -119,6 +120,6 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
     }
   }
 
-  filename   = "cloudbuild.yaml" # Root of the repository
+  filename   = "terraform/iac-pipelines-with-terraform-and-cloud-build/cloudbuild_pull_request_push.yaml"
   depends_on = [google_project_service.apis]
 }
