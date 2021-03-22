@@ -62,6 +62,6 @@ steps:
           for folder in $(ls .); do
             cd $folder
             terraform init
-            terraform plan -detailed-exitcode -out=$BUILD_ID_$SHORT_SHA_tfplan
+            terraform plan -detailed-exitcode -out="$BUILD_ID"_"$SHORT_SHA"_tfplan
             cd -
           done
