@@ -55,6 +55,6 @@ steps:
           for folder in $(ls .); do
             cd $folder
             terraform init
-            terraform plan -detailed-exitcode
+            terraform plan
             cd -
           done
