@@ -108,7 +108,7 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   and it's pushed to.
   EOF
 
-  included_files = ["**/*.tf"]
+  included_files = ["terraform/**.tf"]
 
   github {
     name  = "examples"
