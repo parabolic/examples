@@ -7,6 +7,10 @@ terraform {
       version = "~> 3.60.0"
     }
   }
+
+  backend "gcs" {
+    bucket = "prod-1549784393-terraform-state"
+  }
 }
 
 locals {
@@ -19,6 +23,16 @@ provider "google" {
   region  = local.region
 }
 
-resource "google_pubsub_topic" "production" {
-  name = "production-topic"
+resource "google_storage_bucket" "terraform_state" {
+  name    = "${local.project}-terraform-state"
+  project = local.project
+
+  force_destroy               = false
+  location                    = "EU"
+  storage_class               = "MULTI_REGIONAL"
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled = true
+  }
 }

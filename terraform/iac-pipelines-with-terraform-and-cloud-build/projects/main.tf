@@ -7,7 +7,12 @@ terraform {
       version = "~> 3.60.0"
     }
   }
+
+  backend "gcs" {
+    bucket = "cloud-build-3660853213-terraform-state"
+  }
 }
+
 variable "folder_id" {
   type = string
 }
@@ -22,7 +27,8 @@ locals {
       services = [
         "cloudbuild.googleapis.com",
         "iam.googleapis.com",
-    ] }
+      ]
+    }
     prod-1549784393 = {
       services = [
         "pubsub.googleapis.com",
@@ -36,6 +42,20 @@ locals {
         "storage-api.googleapis.com",
         "iam.googleapis.com",
     ] }
+  }
+}
+
+
+resource "google_storage_bucket" "terraform_state" {
+  name = "cloud-build-3660853213-terraform-state"
+
+  force_destroy               = false
+  location                    = "EU"
+  storage_class               = "MULTI_REGIONAL"
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled = true
   }
 }
 
@@ -108,7 +128,7 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   and it's pushed to.
   EOF
 
-  included_files = ["/terraform/iac-pipelines-with-terraform-and-cloud-build/projects/main.tf"]
+  # included_files = ["/terraform/iac-pipelines-with-terraform-and-cloud-build/projects/main.tf"]
 
   github {
     name  = "examples"
@@ -123,3 +143,5 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   filename   = "terraform/iac-pipelines-with-terraform-and-cloud-build/cloudbuild_pull_request_push.yaml"
   depends_on = [google_project_service.apis]
 }
+
+
