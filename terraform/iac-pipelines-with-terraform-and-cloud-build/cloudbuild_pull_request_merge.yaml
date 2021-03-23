@@ -33,7 +33,7 @@ steps:
           for folder in $(ls .); do
 
             echo "+-------------------------------------------+"
-            echo " tflint templates in folder ${folder} "
+            echo " tflint templates in folder ${folder}"
             echo "+-------------------------------------------+"
 
             cd $folder

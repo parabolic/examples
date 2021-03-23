@@ -108,7 +108,7 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   and it's pushed to.
   EOF
 
-  included_files = ["terraform/**/*.tf"]
+  included_files = ["terraform/iac-pipelines-with-terraform-and-cloud-build/projects/main.tf"]
 
   github {
     name  = "examples"
