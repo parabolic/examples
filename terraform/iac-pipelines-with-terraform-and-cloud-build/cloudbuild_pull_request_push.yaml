@@ -25,28 +25,9 @@ steps:
             terraform validate .
             cd -
           done
-  - id: 'tflint'
-    name: 'wata727/tflint'
-    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - |
-          set -e
-          for folder in $(ls .); do
-
-            echo "+-------------------------------------------+"
-            echo "tflint state ${folder} "
-            echo "+-------------------------------------------+"
-
-            cd $folder
-            tflint .
-            cd -
-          done
   - id: 'terraform-init-plan'
     waitFor:
       - 'fmt-validate'
-      - 'tflint'
     name: 'alpine:3.13.3'
     dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
     entrypoint: 'sh'
