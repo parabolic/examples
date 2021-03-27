@@ -7,7 +7,7 @@ steps:
     args:
       - '-c'
       - |
-          set -eo pipefail
+          set -xeo pipefail
           apk add git bash curl
           git clone https://github.com/tfutils/tfenv.git .tfenv
           ln -s .tfenv/bin/* /usr/local/bin
