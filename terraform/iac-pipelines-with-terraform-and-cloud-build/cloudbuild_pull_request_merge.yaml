@@ -8,9 +8,9 @@ steps:
       - '-c'
       - |
           set -eo pipefail
-          apk add git bash curl
-          git clone https://github.com/tfutils/tfenv.git ~/.tfenv
-          ln -s ~/.tfenv/bin/* /usr/local/bin
+
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
           tfenv install
 
           for folder in $(ls .); do
