@@ -11,7 +11,6 @@ steps:
           apk add git bash curl
           git clone https://github.com/tfutils/tfenv.git ~/.tfenv
           ln -s ~/.tfenv/bin/* /usr/local/bin
-          tfenv install
 
           for folder in $(ls .); do
 
@@ -20,9 +19,8 @@ steps:
             echo "+-------------------------------------------+"
 
             cd $folder
-
+            tfenv install
             terraform fmt -recursive -check -diff .
-
             terraform init -backend=false
             terraform validate .
             cd -
@@ -60,13 +58,14 @@ steps:
           apk add git bash curl
           git clone https://github.com/tfutils/tfenv.git ~/.tfenv
           ln -s ~/.tfenv/bin/* /usr/local/bin
-          tfenv install
 
           for folder in $(ls .); do
             echo "+-------------------------------------------+"
             echo "Planning state ${folder} "
             echo "+-------------------------------------------+"
+
             cd $folder
+            tfenv install
             terraform init
             terraform plan
             cd -
