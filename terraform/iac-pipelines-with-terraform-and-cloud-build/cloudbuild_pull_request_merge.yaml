@@ -1,16 +1,22 @@
 ---
 steps:
   - id: 'fmt-validate'
-    name: 'hashicorp/terraform:0.14.8'
+    name: 'alpine:3.13.3'
     dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
-          set -e
+          set -eo pipefail
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git ~/.tfenv
+          ln -s ~/.tfenv/bin/* /usr/local/bin
+          tfenv install
+
           for folder in $(ls .); do
+
             echo "+-------------------------------------------+"
-            echo " Fmt/Validate templates in folder ${folder} "
+            echo "Fmt/Validate state ${folder} "
             echo "+-------------------------------------------+"
 
             cd $folder
@@ -21,7 +27,6 @@ steps:
             terraform validate .
             cd -
           done
-
   - id: 'tflint'
     name: 'wata727/tflint'
     dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
@@ -33,10 +38,11 @@ steps:
           for folder in $(ls .); do
 
             echo "+-------------------------------------------+"
-            echo " tflint templates in folder ${folder}"
+            echo "tflint state ${folder} "
             echo "+-------------------------------------------+"
 
             cd $folder
             tflint .
             cd -
           done
+

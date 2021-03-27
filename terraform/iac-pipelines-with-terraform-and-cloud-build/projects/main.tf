@@ -6,12 +6,18 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 3.60.0"
     }
+
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = "~> 3.60.0"
+    }
   }
 
   backend "gcs" {
     bucket = "cloud-build-3660853213-terraform-state"
   }
 }
+provider "google-beta" {}
 
 variable "folder_id" {
   type = string
@@ -31,16 +37,16 @@ locals {
     }
     prod-1549784393 = {
       services = [
+        "iam.googleapis.com",
         "pubsub.googleapis.com",
         "storage-api.googleapis.com",
-        "iam.googleapis.com",
     ] }
     stag-3380426388 = {
       services = [
+        "iam.googleapis.com",
         "pubsub.googleapis.com",
         "redis.googleapis.com",
         "storage-api.googleapis.com",
-        "iam.googleapis.com",
     ] }
   }
 }
@@ -95,6 +101,14 @@ resource "google_project_service" "apis" {
   disable_dependent_services = true
 }
 
+resource "google_project_service_identity" "cloudbuild" {
+  provider = google-beta
+
+  project = "cloud-build-3660853213"
+  service = "cloudbuild.googleapis.com"
+}
+
+
 # If there is no repository connected the following blocks will throw an error.
 # Error: Error creating Trigger: googleapi: Error 400: Repository mapping does not exist. Please visit https://console.cloud.google.com/
 # This should be uncommented only when the repository is added manually "click-opsed" in the console.
@@ -116,6 +130,8 @@ resource "google_cloudbuild_trigger" "pull_request_merge" {
     }
   }
 
+  included_files = ["terraform/iac-pipelines-with-terraform-and-cloud-build/**/*.tf"]
+
   filename   = "terraform/iac-pipelines-with-terraform-and-cloud-build/cloudbuild_pull_request_merge.yaml"
   depends_on = [google_project_service.apis]
 }
@@ -127,8 +143,6 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   Trigger for Cloud Build when a pull request is created
   and it's pushed to.
   EOF
-
-  # included_files = ["/terraform/iac-pipelines-with-terraform-and-cloud-build/projects/main.tf"]
 
   github {
     name  = "examples"
