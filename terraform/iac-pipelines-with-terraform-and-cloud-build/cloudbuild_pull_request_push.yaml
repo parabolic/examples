@@ -1,0 +1,72 @@
+---
+steps:
+  - id: 'fmt-validate'
+    name: 'alpine:3.13.3'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -xeo pipefail
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+
+          for folder in $(ls .); do
+
+            echo "+-------------------------------------------+"
+            echo "Fmt/Validate state ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+            tfenv install
+            terraform fmt -recursive -check -diff .
+            terraform init -backend=false
+            terraform validate .
+            cd -
+          done
+  - id: 'tflint'
+    name: 'wata727/tflint'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -e
+          for folder in $(ls .); do
+
+            echo "+-------------------------------------------+"
+            echo "tflint state ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+            tflint .
+            cd -
+          done
+  - id: 'terraform-init-plan'
+    waitFor:
+      - 'fmt-validate'
+      - 'tflint'
+    name: 'alpine:3.13.3'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -eo pipefail
+
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+
+          for folder in $(ls .); do
+            echo "+-------------------------------------------+"
+            echo "Planning state ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+            tfenv install
+            terraform init
+            terraform plan
+            cd -
+          done

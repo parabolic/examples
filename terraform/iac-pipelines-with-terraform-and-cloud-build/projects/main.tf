@@ -6,8 +6,19 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 3.60.0"
     }
+
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = "~> 3.60.0"
+    }
+  }
+
+  backend "gcs" {
+    bucket = "cloud-build-3660853213-terraform-state"
   }
 }
+provider "google-beta" {}
+
 variable "folder_id" {
   type = string
 }
@@ -22,20 +33,46 @@ locals {
       services = [
         "cloudbuild.googleapis.com",
         "iam.googleapis.com",
-    ] }
+      ]
+    }
     prod-1549784393 = {
       services = [
+        "iam.googleapis.com",
         "pubsub.googleapis.com",
         "storage-api.googleapis.com",
-        "iam.googleapis.com",
     ] }
     stag-3380426388 = {
       services = [
+        "iam.googleapis.com",
         "pubsub.googleapis.com",
         "redis.googleapis.com",
         "storage-api.googleapis.com",
-        "iam.googleapis.com",
     ] }
+  }
+}
+
+resource "google_project_iam_member" "editor" {
+  for_each = {
+    for project, _ in local.projects :
+    project => ""
+    if project != "cloud-build-3660853213"
+  }
+
+  project = each.key
+  role    = "roles/editor"
+  member  = "serviceAccount:${google_project_service_identity.cloudbuild.email}"
+}
+
+resource "google_storage_bucket" "terraform_state" {
+  name = "cloud-build-3660853213-terraform-state"
+
+  force_destroy               = false
+  location                    = "EU"
+  storage_class               = "MULTI_REGIONAL"
+  uniform_bucket_level_access = true
+
+  versioning {
+    enabled = true
   }
 }
 
@@ -49,9 +86,8 @@ resource "google_project" "project" {
 
   auto_create_network = lookup(each.value, "auto_create_network", false)
   skip_delete         = lookup(each.value, "skip_delete", true)
-
-  # labels = var.labels
 }
+
 locals {
   # Creates a map of apis and project { project/api => project }
   project_services = zipmap(
@@ -66,6 +102,7 @@ locals {
     ])
   )
 }
+
 resource "google_project_service" "apis" {
   for_each = local.project_services
 
@@ -74,6 +111,14 @@ resource "google_project_service" "apis" {
 
   disable_dependent_services = true
 }
+
+resource "google_project_service_identity" "cloudbuild" {
+  provider = google-beta
+
+  project = "cloud-build-3660853213"
+  service = "cloudbuild.googleapis.com"
+}
+
 
 # If there is no repository connected the following blocks will throw an error.
 # Error: Error creating Trigger: googleapi: Error 400: Repository mapping does not exist. Please visit https://console.cloud.google.com/
@@ -96,7 +141,9 @@ resource "google_cloudbuild_trigger" "pull_request_merge" {
     }
   }
 
-  filename   = "cloudbuild.yaml" # Root of the repository
+  included_files = ["terraform/iac-pipelines-with-terraform-and-cloud-build/**/*.tf"]
+
+  filename   = "terraform/iac-pipelines-with-terraform-and-cloud-build/cloudbuild_pull_request_merge.yaml"
   depends_on = [google_project_service.apis]
 }
 
@@ -104,10 +151,9 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   project     = "cloud-build-3660853213"
   name        = "pull-request-push"
   description = <<EOF
-  Trigger for Cloud Build when a pull request is created.
+  Trigger for Cloud Build when a pull request is created
+  and it's pushed to.
   EOF
-
-  included_files = ["terraform/iac-pipelines-with-terraform-and-cloud-build/**"]
 
   github {
     name  = "examples"
@@ -119,6 +165,8 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
     }
   }
 
-  filename   = "cloudbuild.yaml" # Root of the repository
+  filename   = "terraform/iac-pipelines-with-terraform-and-cloud-build/cloudbuild_pull_request_push.yaml"
   depends_on = [google_project_service.apis]
 }
+
+

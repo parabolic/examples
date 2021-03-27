@@ -1,0 +1,48 @@
+---
+steps:
+  - id: 'fmt-validate'
+    name: 'alpine:3.13.3'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -eo pipefail
+
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+          tfenv install
+
+          for folder in $(ls .); do
+
+            echo "+-------------------------------------------+"
+            echo "Fmt/Validate state ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+
+            terraform fmt -recursive -check -diff .
+
+            terraform init -backend=false
+            terraform validate .
+            cd -
+          done
+  - id: 'tflint'
+    name: 'wata727/tflint'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -e
+          for folder in $(ls .); do
+
+            echo "+-------------------------------------------+"
+            echo "tflint state ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+            tflint .
+            cd -
+          done
+
