@@ -7,11 +7,10 @@ steps:
     args:
       - '-c'
       - |
-          set -eo pipefail
-
+          set -xeo pipefail
+          apk add git bash curl
           git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
           ln -s /opt/.tfenv/bin/* /usr/local/bin
-          tfenv install
 
           for folder in $(ls .); do
 
@@ -20,9 +19,8 @@ steps:
             echo "+-------------------------------------------+"
 
             cd $folder
-
+            tfenv install
             terraform fmt -recursive -check -diff .
-
             terraform init -backend=false
             terraform validate .
             cd -
@@ -45,4 +43,3 @@ steps:
             tflint .
             cd -
           done
-
