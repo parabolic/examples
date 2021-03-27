@@ -51,6 +51,17 @@ locals {
   }
 }
 
+resource "google_project_iam_member" "editor" {
+  for_each = {
+    for project, _ in local.projects :
+    project => ""
+    if project != "cloud-build-3660853213"
+  }
+
+  project = each.key
+  role    = "roles/editor"
+  member  = "serviceAccount:${google_project_service_identity.cloudbuild.email}"
+}
 
 resource "google_storage_bucket" "terraform_state" {
   name = "cloud-build-3660853213-terraform-state"
@@ -75,9 +86,8 @@ resource "google_project" "project" {
 
   auto_create_network = lookup(each.value, "auto_create_network", false)
   skip_delete         = lookup(each.value, "skip_delete", true)
-
-  # labels = var.labels
 }
+
 locals {
   # Creates a map of apis and project { project/api => project }
   project_services = zipmap(
@@ -92,6 +102,7 @@ locals {
     ])
   )
 }
+
 resource "google_project_service" "apis" {
   for_each = local.project_services
 
