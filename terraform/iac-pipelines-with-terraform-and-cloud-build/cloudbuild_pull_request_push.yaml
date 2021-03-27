@@ -48,6 +48,6 @@ steps:
             cd $folder
             tfenv install
             terraform init
-            terraform plan
+            terraform plan -input=false
             cd -
           done
