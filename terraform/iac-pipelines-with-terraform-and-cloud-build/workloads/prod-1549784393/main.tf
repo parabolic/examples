@@ -90,4 +90,3 @@ output "app_1_sa_key" {
   value     = google_service_account_key.app_1.private_key
   sensitive = true
 }
-
