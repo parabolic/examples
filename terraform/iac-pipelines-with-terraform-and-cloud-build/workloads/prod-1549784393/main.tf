@@ -79,10 +79,10 @@ resource "google_service_account_key" "app_1" {
 }
 
 resource "google_pubsub_subscription_iam_binding" "app_1" {
-  subscription = google_pubsub_subscription.app_1
+  subscription = google_pubsub_subscription.app_1.name
   role         = "roles/pubsub.subscriber"
   members = [
-    "serviceAccount:${google_service_account.app_1}",
+    "serviceAccount:${google_service_account.app_1.email}",
   ]
 }
 
