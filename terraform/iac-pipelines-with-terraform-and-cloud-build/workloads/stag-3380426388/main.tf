@@ -14,8 +14,7 @@ terraform {
 
 locals {
   project = "stag-3380426388"
-
-  region = "eu-west4"
+  region  = "eu-west4"
 }
 
 provider "google" {

@@ -25,3 +25,65 @@ steps:
             terraform validate .
             cd -
           done
+  - id: 'terraform-init-plan'
+    waitFor:
+      - 'fmt-validate'
+    name: 'alpine:3.13.3'
+    volumes:
+      - name: 'terraform_plan_files'
+        path: '/var/terraform_plan_files'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -eo pipefail
+
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+
+          for folder in $(ls .); do
+            echo "+-------------------------------------------+"
+            echo "Planning state ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+            tfenv install
+            terraform init
+            terraform plan \
+              -input=false \
+              -out="/var/terraform_plan_files/${folder}_${BUILD_ID}_${PROJECT_NUMBER}.plan"
+            cd -
+          done
+  - id: 'terraform-apply'
+    waitFor:
+      - 'terraform-init-plan'
+    name: 'alpine:3.13.3'
+    volumes:
+      - name: 'terraform_plan_files'
+        path: '/var/terraform_plan_files'
+    dir: 'terraform/iac-pipelines-with-terraform-and-cloud-build/workloads'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -eo pipefail
+
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+
+          for folder in $(ls .); do
+            echo "+-------------------------------------------+"
+            echo "Applying state ${folder} "
+            echo "+-------------------------------------------+"
+
+            cd $folder
+            tfenv install
+            terraform init
+            terraform apply \
+              -auto-approve \
+              "/var/terraform_plan_files/${folder}_${BUILD_ID}_${PROJECT_NUMBER}.plan"
+            cd -
+          done

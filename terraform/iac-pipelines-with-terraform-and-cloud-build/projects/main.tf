@@ -17,6 +17,7 @@ terraform {
     bucket = "cloud-build-3660853213-terraform-state"
   }
 }
+
 provider "google-beta" {}
 
 variable "folder_id" {
