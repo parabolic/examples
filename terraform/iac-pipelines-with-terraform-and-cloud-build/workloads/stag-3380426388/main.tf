@@ -52,7 +52,7 @@ resource "google_pubsub_subscription" "app_1" {
     app = "1"
   }
 
-  message_retention_duration = "200s"
+  message_retention_duration = "600s"
   retain_acked_messages      = false
 
   ack_deadline_seconds = 20
