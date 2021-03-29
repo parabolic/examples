@@ -77,7 +77,7 @@ resource "google_service_account_key" "app_1" {
   service_account_id = google_service_account.app_1.name
 }
 
-resource "google_pubsub_subscription_iam_binding" "" {
+resource "google_pubsub_subscription_iam_binding" "app_1" {
   subscription = google_pubsub_subscription.app_1
   role         = "roles/pubsub.subscriber"
   members = [
