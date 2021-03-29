@@ -69,7 +69,7 @@ resource "google_pubsub_subscription" "app_1" {
 }
 
 resource "google_service_account" "app_1" {
-  account_id   = "app-1"
+  account_id   = "application-1"
   display_name = "app-1"
 }
 
