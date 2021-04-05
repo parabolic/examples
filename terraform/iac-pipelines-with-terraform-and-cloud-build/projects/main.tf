@@ -7,8 +7,7 @@ terraform {
       version = "~> 3.60.0"
     }
 
-    google-beta = {
-      source  = "hashicorp/google-beta"
+    google-beta = { source = "hashicorp/google-beta"
       version = "~> 3.60.0"
     }
   }
@@ -21,7 +20,8 @@ terraform {
 provider "google-beta" {}
 
 variable "folder_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "billing_account" {
@@ -52,7 +52,7 @@ locals {
   }
 }
 
-resource "google_project_iam_member" "editor" {
+resource "google_project_iam_member" "owner" {
   for_each = {
     for project, _ in local.projects :
     project => ""
@@ -60,7 +60,7 @@ resource "google_project_iam_member" "editor" {
   }
 
   project = each.key
-  role    = "roles/editor"
+  role    = "roles/owner"
   member  = "serviceAccount:${google_project_service_identity.cloudbuild.email}"
 }
 
@@ -170,4 +170,6 @@ resource "google_cloudbuild_trigger" "pull_request_push" {
   depends_on = [google_project_service.apis]
 }
 
-
+output "cloudbuild_service_account_email" {
+  value = google_project_service_identity.cloudbuild.email
+}
