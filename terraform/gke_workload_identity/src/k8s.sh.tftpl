@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -ex -o pipefail -o nounset
+
+K8S_NAMESPACE="${k8s_namespace}"
+K8S_SERVICE_ACCOUNT="${k8s_service_account}"
+GCP_REGION="${gcp_region}"
+CLUSTER_NAME="${cluster_name}"
+GCP_PROJECT_ID="${gcp_project_id}"
+K8S_CONTEXT="${k8s_context}"
+GCP_SERVICE_ACCOUNT="${gcp_service_account}"
+
+gcloud container clusters get-credentials "$CLUSTER_NAME" --project="$GCP_PROJECT_ID" --region="$GCP_REGION"
+
+kubectl config use-context "$K8S_CONTEXT"
+
+kubectl create namespace "$K8S_NAMESPACE"
+
+kubectl create serviceaccount "$K8S_SERVICE_ACCOUNT" \
+    --namespace="$K8S_NAMESPACE"
+
+kubectl annotate serviceaccount "$K8S_SERVICE_ACCOUNT" \
+    --namespace="$K8S_NAMESPACE" \
+    iam.gke.io/gcp-service-account="$GCP_SERVICE_ACCOUNT"
+
+kubectl run --image=google/cloud-sdk:slim \
+    --namespace="$K8S_NAMESPACE" \
+    --overrides="{ 'spec': { 'serviceAccount': $K8S_SERVICE_ACCOUNT } }" \
+    cloudlad -- sleep infinity
