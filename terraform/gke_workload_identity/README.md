@@ -47,7 +47,7 @@ No modules.
 | <a name="input_billing_account"></a> [billing\_account](#input\_billing\_account) | n/a | `string` | n/a | yes |
 | <a name="input_folder_id"></a> [folder\_id](#input\_folder\_id) | n/a | `string` | `""` | no |
 | <a name="input_k8s_namespace"></a> [k8s\_namespace](#input\_k8s\_namespace) | n/a | `string` | `"cloudlad"` | no |
-| <a name="input_k8s_script_path"></a> [k8s\_script\_path](#input\_k8s\_script\_path) | n/a | `string` | `null` | no |
+| <a name="input_k8s_script_path"></a> [k8s\_script\_path](#input\_k8s\_script\_path) | n/a | `string` | `"./"` | no |
 | <a name="input_k8s_service_account"></a> [k8s\_service\_account](#input\_k8s\_service\_account) | n/a | `string` | `"cloudlad"` | no |
 
 ## Outputs

@@ -19,5 +19,5 @@ variable "k8s_service_account" {
 
 variable "k8s_script_path" {
   type    = string
-  default = null
+  default = "./"
 }
