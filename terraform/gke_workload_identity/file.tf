@@ -1,5 +1,5 @@
 locals {
-  k8s_script_path = var.k8s_script_path == "./" ? "../${path.module}/k8s.sh" : "${var.k8s_script_path}/k8s.sh"
+  k8s_script_path = var.k8s_script_path == "./" ? "${path.module}/k8s.sh" : "${var.k8s_script_path}/k8s.sh"
 }
 
 resource "local_file" "k8s" {

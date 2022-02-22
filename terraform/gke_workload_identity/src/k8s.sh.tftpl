@@ -25,5 +25,5 @@ kubectl annotate serviceaccount "$K8S_SERVICE_ACCOUNT" \
 
 kubectl run --image=google/cloud-sdk:slim \
     --namespace="$K8S_NAMESPACE" \
-    --overrides="{ 'spec': { 'serviceAccount': $K8S_SERVICE_ACCOUNT } }" \
+    --overrides="{ \"spec\": { \"serviceAccount\": \"$K8S_SERVICE_ACCOUNT\" } }" \
     cloudlad -- sleep infinity
